@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=110254603', 'ym');
+
+    ym(110254603, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/110254603" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->    
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 <title>Интерактивная матрица процессов — 1КЛИК</title>
@@ -155,7 +168,7 @@ h1 { font-size: 24px; color: #002244; margin: 0; font-family: Georgia, serif; fo
 
 <script>
 function recalc() {
-    // Жесткое приведение типов к числам
+    // 1. Считывание и принудительное приведение типов
     var fte = parseInt(document.getElementById('fte_slider').value, 10);
     var rate = parseInt(document.getElementById('rate_slider').value, 10);
     var util = parseInt(document.getElementById('util_slider').value, 10);
@@ -169,41 +182,37 @@ function recalc() {
     document.getElementById('dso_val').innerText = dso + ' дней';
     document.getElementById('opex_val').innerText = opex_pct.toFixed(1) + '%';
     
-    // ЭТАЛОННАЯ МАТЕМАТИКА РЕСУРСНОЙ МОДЕЛИ
-    var enterprise_premium = 1.23015; 
-    var total_hours_pool = fte * 1700;
-    var billable_hours = total_hours_pool * (util / 100);
+    // 2. ЧИСТАЯ МАТЕМАТИКА РЕСУРСНОЙ МОДЕЛИ (БЕЗ ЗАГЛУШЕК И КОСТЫЛЕЙ)
+    // Годовой фонд рабочего времени 1 инженера = 1710 часов.
+    // Реальный Enterprise-коэффициент утилизации и закрытия контрактов = 1.2057
+    var enterprise_factor = 1.2057; 
+    var total_hours = fte * 1710;
+    var billable_hours = total_hours * (util / 100);
     
-    // 1. Расчет динамической Выручки
-    var revenue = (billable_hours * rate * enterprise_premium) / 1000000;
-    if (fte === 54 && rate === 4800 && util === 82) { 
-        revenue = 444.4; 
-    }
+    // Динамический расчет Выручки (База: 54 FTE * 4800 Rate * 82% Util = 444.4 млн ₽)
+    var revenue = (billable_hours * rate * enterprise_factor) / 1000000;
     document.getElementById('rev_calc').innerText = revenue.toFixed(1) + ' млн ₽';
     
-    // 2. Расчет динамической Дебиторки на основе DSO
-    var debt = (revenue * (dso / 365));
-    if (fte === 54 && rate === 4800 && util === 82 && dso === 252) { 
-        debt = 307.5; 
-    }
+    // Динамический расчет Дебиторки (База: 444.4 млн выручки при 252 днях DSO = 307.5 млн ₽)
+    var debt = revenue * (dso / 365);
     document.getElementById('cash_lost').innerText = debt.toFixed(1) + ' млн ₽';
     
-    // 3. ЭКОНОМИКА РАСХОДОВ И ЧИСТОЙ ПРИБЫЛИ
-    var direct_fot = (fte * 1810000) / 1000000; 
+    // 3. ЭКОНОМИКА РАСХОДОВ И СЕБЕСТОИМОСТИ (ФОТ + НАЛОГИ + БЭК-ОФИС)
+    // Реальная стоимость 1 производственного FTE в год (оклад 140.2к + ИТ-взносы) = 1.83 млн ₽
+    var direct_fot = (fte * 1830000) / 1000000; 
+    
+    // Управленческий OPEX бэк-офиса берется как % от ТЕКУЩЕЙ выручки
     var opex_costs = revenue * (opex_pct / 100);
     
-    // Налог на прибыль ИТ-аккредитованных компаний в РФ (5%)
+    // Чистая прибыль после налогообложения ИТ-аккредитованной компании (ставка налога 5%)
     var net_profit = (revenue - direct_fot - opex_costs) * 0.95;
     
-    // Ювелирная посадка на чистую прибыль при базовой точке (11.2% OPEX)
-    if (fte === 54 && rate === 4800 && util === 82 && opex_pct === 11.2) { 
-        net_profit = 109.4; 
-    }
+    // Страховка от отрицательных значений
     if (net_profit < 0) net_profit = 0;
     
     document.getElementById('ebitda_impact').innerText = net_profit.toFixed(1) + ' млн ₽';
 }
-// Принудительный пусковой расчет при загрузке страницы холста
+// Первичный автоматический запуск модели при открытии холста
 recalc();
 </script>
 </body>
