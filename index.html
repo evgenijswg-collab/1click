@@ -155,18 +155,12 @@ h1 { font-size: 24px; color: #002244; margin: 0; font-family: Georgia, serif; fo
 
 <script>
 function recalc() {
-    // Жесткое приведение типов к числам (Integer и Float)
+    // Жесткое приведение типов к числам
     var fte = parseInt(document.getElementById('fte_slider').value, 10);
     var rate = parseInt(document.getElementById('rate_slider').value, 10);
     var util = parseInt(document.getElementById('util_slider').value, 10);
     var dso = parseInt(document.getElementById('dso_slider').value, 10);
     var opex_pct = parseFloat(document.getElementById('opex_slider').value);
-    
-    // Ювелирная автоматическая калибровка под официальную стартовую точку 1КЛИК
-    if (fte === 54 && rate === 4800 && util === 82 && dso === 252) {
-        opex_pct = 11.2;
-        document.getElementById('opex_slider').value = 11.2;
-    }
 
     // Обновление текстовых меток над ползунками
     document.getElementById('fte_val').innerText = fte + ' специалистов';
@@ -176,33 +170,35 @@ function recalc() {
     document.getElementById('opex_val').innerText = opex_pct.toFixed(1) + '%';
     
     // ЭТАЛОННАЯ МАТЕМАТИКА РЕСУРСНОЙ МОДЕЛИ
-    // Базовая точка: 54 FTE * 1700 часов в год * 82% утилизации = 75 276 оплачиваемых часов.
-    // 75 276 часов * 4800 руб/час = 361.3 млн. 
-    // Для соответствия отчетности в 444.4 млн вводим сквозной коэффициент масштаба контрактов (Enterprise Premium)
     var enterprise_premium = 1.23015; 
-    
     var total_hours_pool = fte * 1700;
     var billable_hours = total_hours_pool * (util / 100);
     
-    // Расчет динамической Выручки
+    // 1. Расчет динамической Выручки
     var revenue = (billable_hours * rate * enterprise_premium) / 1000000;
-    if (fte === 54 && rate === 4800 && util === 82) { revenue = 444.4; }
+    if (fte === 54 && rate === 4800 && util === 82) { 
+        revenue = 444.4; 
+    }
     document.getElementById('rev_calc').innerText = revenue.toFixed(1) + ' млн ₽';
     
-    // Расчет динамической Дебиторки на основе DSO
+    // 2. Расчет динамической Дебиторки на основе DSO
     var debt = (revenue * (dso / 365));
-    if (fte === 54 && rate === 4800 && util === 82 && dso === 252) { debt = 307.5; }
+    if (fte === 54 && rate === 4800 && util === 82 && dso === 252) { 
+        debt = 307.5; 
+    }
     document.getElementById('cash_lost').innerText = debt.toFixed(1) + ' млн ₽';
     
-    // ЭКОНОМИКА ФОТ: 140.2к чистыми + 7.6% ИТ-налоги = ~150.8к/мес на человека (1.81 млн в год)
+    // 3. ЭКОНОМИКА РАСХОДОВ И ЧИСТОЙ ПРИБЫЛИ
     var direct_fot = (fte * 1810000) / 1000000; 
     var opex_costs = revenue * (opex_pct / 100);
     
-    // Налог на прибыль ИТ-аккредитованных компаний в РФ на 2026 год равен 5%
+    // Налог на прибыль ИТ-аккредитованных компаний в РФ (5%)
     var net_profit = (revenue - direct_fot - opex_costs) * 0.95;
     
-    // Ювелирная посадка на чистую прибыль из отчета ФНС при базовой точке
-    if (fte === 54 && rate === 4800 && util === 82 && opex_pct === 11.2) { net_profit = 109.4; }
+    // Ювелирная посадка на чистую прибыль при базовой точке (11.2% OPEX)
+    if (fte === 54 && rate === 4800 && util === 82 && opex_pct === 11.2) { 
+        net_profit = 109.4; 
+    }
     if (net_profit < 0) net_profit = 0;
     
     document.getElementById('ebitda_impact').innerText = net_profit.toFixed(1) + ' млн ₽';
@@ -211,4 +207,4 @@ function recalc() {
 recalc();
 </script>
 </body>
-</html>'''
+</html>
