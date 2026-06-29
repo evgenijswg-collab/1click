@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!-- saved from url=(0071)file:///C:/Users/bex/Downloads/1click_value_driver_dashboard%20(3).html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Интерактивная матрица процессов — 1КЛИК</title>
+<style>
+body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #F4F6F8; margin: 0; padding: 35px; color: #111111; }
+.dashboard-container { max-width: 1300px; margin: 0 auto; background: #FFFFFF; border: 1px solid #E5E7EB; border-top: 6px solid #002244; padding: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.header-block { border-bottom: 2px solid #002244; padding-bottom: 15px; margin-bottom: 25px; }
+h1 { font-size: 24px; color: #002244; margin: 0; font-family: Georgia, serif; font-weight: 700; }
+.layout-grid { display: grid; grid-template-columns: 350px 1fr; gap: 30px; margin-top: 25px; }
+.sidebar-panel { background: #F8F9FA; border: 1px solid #D1D5DB; padding: 20px; border-radius: 4px; }
+.sidebar-panel h3 { font-size: 13px; color: #002244; text-transform: uppercase; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #D1D5DB; padding-bottom: 5px; }
+.slider-group { margin-bottom: 20px; }
+.slider-group label { display: block; font-size: 12px; font-weight: bold; color: #333; margin-bottom: 5px; }
+.slider-group input { width: 100%; margin-bottom: 5px; }
+.live-results { background: #002244; color: #FFFFFF; padding: 15px; border-radius: 4px; margin-top: 25px; }
+.live-results div { font-size: 11px; text-transform: uppercase; color: #94A3B8; margin-bottom: 5px; }
+.live-results span { font-size: 22px; font-weight: bold; font-family: Georgia, serif; color: #38BDF8; }
+.main-matrix { border: 1px solid #D1D5DB; width: 100%; border-collapse: collapse; }
+.main-matrix th { background: #002244; color: #FFFFFF; font-size: 11px; text-transform: uppercase; padding: 10px 14px; text-align: left; }
+.main-matrix td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid #E5E7EB; vertical-align: top; }
+.level-title { background: #F0F4F8; font-weight: bold; color: #002244; font-size: 11px; text-transform: uppercase; }
+.badge { background: #E5E7EB; color: #002244; font-size: 10px; font-weight: 700; padding: 2px 5px; border-radius: 2px; text-transform: uppercase; }
+.flow-line { border-left: 2px solid #38BDF8; padding-left: 10px; margin-bottom: 5px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="dashboard-container">
+<div class="header-block">
+<h1>МАТРИЦА СКВОЗНЫХ ПРОЦЕССОВ</h1>
+<p style="margin:5px 0 0 0; font-size:11px; color:#555; text-transform:uppercase; letter-spacing:1px; font-weight:600;">Модель операционного влияния линейных KPI на ликвидность и прибыль ООО «1КЛИК»</p>
+</div>
+<div class="layout-grid">
+<div class="sidebar-panel">
+<h3>🎛️ Симулятор юнит-экономики</h3>
+<div class="slider-group">
+<label>Утилизация производственного ядра (%):</label>
+<input type="range" id="util_slider" min="60" max="95" value="82" oninput="recalc()">
+<div style="display:flex; justify-content:space-between; font-size:11px; color:#555;"><span id="util_val">82%</span><span>Цель: ≥82%</span></div>
+</div>
+<div class="slider-group">
+<label>Период оборачиваемости (DSO дней):</label>
+<input type="range" id="dso_slider" min="150" max="300" value="252" oninput="recalc()">
+<div style="display:flex; justify-content:space-between; font-size:11px; color:#555;"><span id="dso_val">252 дней</span><span>Цель: -25 дней</span></div>
+</div>
+<div class="live-results">
+<div>Заморожено в дебиторке:</div>
+<span id="cash_lost">307.5 млн ₽</span>
+<div style="margin-top:10px;">Операционная прибыль (EBITDA):</div>
+<span id="ebitda_impact">109.4 млн ₽</span>
+</div>
+<p style="font-size:11px; color:#666; margin-top:20px; line-height:1.4;">*Передвигайте ползунки, это наглядно покажет, как изменение коммерческой загрузки программистов и скорости биллинга РП моментально высвобождают оборотный капитал.</p>
+</div>
+<div>
+<table class="main-matrix">
+<thead>
+<tr><th style="width:25%;">Роль и ИТ-система</th><th style="width:45%;">Сбалансированные KPI</th><th style="width:30%;">Сквозной операционный смысл</th></tr>
+</thead>
+<tbody>
+<tr class="level-title"><td colspan="3">Уровень 1-2: Стратегическое управление (C-Level)</td></tr>
+<tr>
+<td><b>Генеральный директор</b><br><span class="badge">1С:УНФ</span></td>
+<td>• Чистая прибыль компании<br>• Объем проектной выручки холдинга<br>• Свободный денежный поток (Cash Flow)</td>
+<td>Конечный финансовый результат для акционеров. Защита бизнеса от дефицита ликвидности.</td>
+</tr>
+<tr>
+<td><b>Операционный директор (COO)</b><br><span class="badge">1С:УНФ</span></td>
+<td>• <b>Прибыль производственного контура (OIBDA)</b><br>• <b>Общая утилизация ядра (54 FTE) ≥ 82%</b><br>• Снижение постоянных расходов на 10%</td>
+<td><b>Центральный балансировщик.</b> Контролирует маржинальность часа и утилизацию ресурсных пулов.</td>
+</tr>
+<tr class="level-title"><td colspan="3">Уровень 3: Руководители потоков (Матричный контур)</td></tr>
+<tr>
+<td><b>Директор по продажам</b><br><span class="badge">CRM</span></td>
+<td>• Маржинальность пайплайна (Pipeline Margin)<br>• <b style="color:#002244;">Просроченная дебиторка по контрактам (DSO)</b><br>• % сделок по типовым модулям 1С</td>
+<td><b>Ответственность за кэш на входе.</b> Менеджеры больше не отгружают «в долг» ради объема выручки.</td>
+</tr>
+<tr>
+<td><b>Руководитель PMO</b><br><span class="badge">1С:УНФ</span></td>
+<td>• Маржинальность портфеля живых проектов<br>• Сдача вех клиентам строго в дедлайн<br>• <b style="color:#002244;">Генерация УПД / актов в ЭДО (≤ 1 день)</b></td>
+<td><b>Ответственность за биллинг вех.</b> Быстрая передача документов в ЭДО сжимает внутренний цикл.</td>
+</tr>
+<tr>
+<td><b>Директор по производству</b><br><span class="badge">1С:ЗУП</span></td>
+<td>• <b style="color:#002244;">First Time Yield (% часов, принятых QA)</b><br>• Коэффициент удержания архитекторов и лидов<br>• Выполнение планов сертификации 1С</td>
+<td><b>Ответственность за качество «станка».</b> Убран объем продаж. Отвечает за отсутствие простоев и брака.</td>
+</tr>
+<tr class="level-title"><td colspan="3">Уровень 4: Линейные команды (Ликвидация раздрая)</td></tr>
+<tr>
+<td><b>Руководитель проекта (РП)</b><br><span class="badge">1С:УНФ</span></td>
+<td><div class="flow-line">→ Соблюдение бюджетов проекта по часам</div>
+<div class="flow-line">→ Скорость согласования тайм-шитов команды (≤24ч)</div></td>
+<td><b>Связующее звено конвейера.</b> Быстрое согласование часов — это автоматический запуск биллинга в PMO.</td>
+</tr>
+<tr>
+<td><b>Системный архитектор 1С</b><br><span class="badge">1С:УНФ</span></td>
+<td><div class="flow-line">→ Точность эстимейтов на этапе пресейла</div>
+<div class="flow-line">→ Отсутствие дефектов архитектуры при сдаче (UAT)</div></td>
+<td>Страхует маржу на входе. Запрещает продажи невыполнимых кастомных решений.</td>
+</tr>
+<tr>
+<td><b>Программист 1С / Аналитик</b><br><span class="badge">1С:УНФ</span></td>
+<td><div class="flow-line">→ Выработка коммерческих часов за день (Timesheet)</div>
+<div class="flow-line">→ 0 возвратов задач от QA по причине брака кода</div></td>
+<td>Линейная ежедневная выработка оплачиваемых часов (Billable) без генерации брака.</td>
+</tr>
+<tr>
+<td><b>Администратор проектов</b><br><span class="badge">1С:ДО</span></td>
+<td><div class="flow-line">→ Скорость выгрузки сводных отчетов</div>
+<div class="flow-line">→ 0 ошибок in-production в документах для ЭДО</div></td>
+<td>Обеспечение бесперебойной работы биллинга, минимизация задержек оплат из-за бумажных ошибок.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<script>
+function recalc() {
+    var util = document.getElementById('util_slider').value;
+    var dso = document.getElementById('dso_slider').value;
+    document.getElementById('util_val').innerText = util + '%';
+    document.getElementById('dso_val').innerText = dso + ' дней';
+    var current_deb = (307.5 * (dso / 252)).toFixed(1);
+    document.getElementById('cash_lost').innerText = current_deb + ' млн ₽';
+    var base_ebitda = 109.4;
+    var diff_util = util - 82;
+    var current_ebitda = (base_ebitda + (diff_util * 4.2)).toFixed(1);
+    document.getElementById('ebitda_impact').innerText = current_ebitda + ' млн ₽';
+}
+recalc();
+</script>
+
+</body></html>
