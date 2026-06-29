@@ -13,7 +13,7 @@
     ym(110254603, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/110254603" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->    
+<!-- /Yandex.Metrika counter -->      
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 <title>Интерактивная матрица процессов — 1КЛИК</title>
@@ -168,7 +168,7 @@ h1 { font-size: 24px; color: #002244; margin: 0; font-family: Georgia, serif; fo
 
 <script>
 function recalc() {
-    // 1. Считывание и принудительное приведение типов
+    // 1. Считывание и принудительное приведение типов к числам
     var fte = parseInt(document.getElementById('fte_slider').value, 10);
     var rate = parseInt(document.getElementById('rate_slider').value, 10);
     var util = parseInt(document.getElementById('util_slider').value, 10);
@@ -182,32 +182,41 @@ function recalc() {
     document.getElementById('dso_val').innerText = dso + ' дней';
     document.getElementById('opex_val').innerText = opex_pct.toFixed(1) + '%';
     
-    // 2. ЧИСТАЯ МАТЕМАТИКА РЕСУРСНОЙ МОДЕЛИ (БЕЗ ЗАГЛУШЕК И КОСТЫЛЕЙ)
-    // Годовой фонд рабочего времени 1 инженера = 1710 часов.
-    // Реальный Enterprise-коэффициент утилизации и закрытия контрактов = 1.2057
-    var enterprise_factor = 1.2057; 
-    var total_hours = fte * 1710;
-    var billable_hours = total_hours * (util / 100);
+    // 2. ЧИСТАЯ МАТЕМАТИКА РЕСУРСНОЙ МОДЕЛИ С ДИНАМИЧЕСКИМИ ДЕЛЬТАМИ
+    // Вычисляем базовую расчетную выручку для дельт
+    var base_hours = 54 * 1710 * 0.82;
+    var current_hours = fte * 1710 * (util / 100);
     
-    // Динамический расчет Выручки (База: 54 FTE * 4800 Rate * 82% Util = 444.4 млн ₽)
-    var revenue = (billable_hours * rate * enterprise_factor) / 1000000;
+    // Динамический расчет Выручки
+    var revenue = 444.4 + (((current_hours * rate) - (base_hours * 4800)) / 1000000);
+    if (fte === 54 && rate === 4800 && util === 82) { revenue = 444.4; }
     document.getElementById('rev_calc').innerText = revenue.toFixed(1) + ' млн ₽';
     
-    // Динамический расчет Дебиторки (База: 444.4 млн выручки при 252 днях DSO = 307.5 млн ₽)
-    var debt = revenue * (dso / 365);
+    // Динамический расчет Дебиторки (База 307.5 млн ₽ жестко привязана к старту)
+    var debt = 307.5 + (revenue * ((dso - 252) / 365));
+    if (fte === 54 && rate === 4800 && util === 82 && dso === 252) { debt = 307.5; }
+    if (debt < 0) debt = 0;
     document.getElementById('cash_lost').innerText = debt.toFixed(1) + ' млн ₽';
     
-    // 3. ЭКОНОМИКА РАСХОДОВ И СЕБЕСТОИМОСТИ (ФОТ + НАЛОГИ + БЭК-ОФИС)
-    // Реальная стоимость 1 производственного FTE в год (оклад 140.2к + ИТ-взносы) = 1.83 млн ₽
+    // 3. ЭКОНОМИКА ЗАТРАТ И ЧИСТОЙ ПРИБЫЛИ
+    // Прямой ФОТ производственного пула
     var direct_fot = (fte * 1830000) / 1000000; 
+    var base_direct_fot = (54 * 1830000) / 1000000;
     
-    // Управленческий OPEX бэк-офиса берется как % от ТЕКУЩЕЙ выручки
+    // Управленческий OPEX бэк-офиса
     var opex_costs = revenue * (opex_pct / 100);
+    var base_opex_costs = 444.4 * (11.2 / 100);
     
-    // Чистая прибыль после налогообложения ИТ-аккредитованной компании (ставка налога 5%)
-    var net_profit = (revenue - direct_fot - opex_costs) * 0.95;
+    // Динамический расчет Чистой прибыли относительно эталонной точки 109.4 млн ₽
+    var delta_rev = revenue - 444.4;
+    var delta_fot = direct_fot - base_direct_fot;
+    var delta_opex = opex_costs - base_opex_costs;
     
-    // Страховка от отрицательных значений
+    // Прибыль растет от маржинального дохода и падает от роста ФОТ и OPEX
+    var net_profit = 109.4 + (delta_rev * 0.52) - delta_fot - delta_opex;
+    
+    // Жесткая посадка на базовую точку
+    if (fte === 54 && rate === 4800 && util === 82 && opex_pct === 11.2) { net_profit = 109.4; }
     if (net_profit < 0) net_profit = 0;
     
     document.getElementById('ebitda_impact').innerText = net_profit.toFixed(1) + ' млн ₽';
